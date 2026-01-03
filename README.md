@@ -541,6 +541,55 @@ FROM employee_revenue;
 
 ```
 
+---
+
+## ▶️ How to Use This Project
+
+1. Load the database schema and tables into **PostgreSQL**.
+2. Ensure all **date and time columns** are correctly cast.
+3. Execute SQL queries **section by section** as documented.
+4. *(Optional)* Export query results to **Power BI, Tableau, or Excel** for visualization.
+
+---
+
+## 🧩 Assumptions Made
+
+- Orders are mapped to employee shifts based on **order time**.
+- Inventory quantities reflect **current available stock**.
+- Business rules (e.g., **25-hour overtime threshold**) are assumed.
+- One row in the `orders` table represents **one item per order**.
+
+---
+
+## 📈 Key Insights & Business Value
+
+- Improved workforce scheduling and reduced overtime costs.
+- Identified peak sales hours and high-performing products.
+- Enabled targeted customer retention strategies.
+- Reduced stockout risk through proactive inventory monitoring.
+- Quantified individual employee contribution to revenue.
+
+---
+
+## 🛠 Tools & Technologies
+
+- **Database:** PostgreSQL  
+- **Language:** SQL  
+- **Use Case:** Retail / Coffee Shop Analytics  
+
+---
+
+## 👤 Author
+
+**Aditya Kumar Dwivedi**  
+Aspiring Data Analyst | SQL & Business Analytics  
+
+📧 Email: dwivediaditya2322006@gmail.com  
+💼 LinkedIn: [Connect Me!](https://www.linkedin.com/in/dwivediaditya4093/)
+
+
+
+
 
 
 
