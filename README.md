@@ -142,7 +142,73 @@ FROM OverWorked o
 CROSS JOIN UnderWorked u;
 
 ```
+### 🔹 2. Preventing Shift Overlaps & Scheduling Optimization  
 
+#### Q5. Detect Overlapping Shifts  
+**Business Problem:**  
+Identify scheduling conflicts where multiple employees are assigned to the same shift.
+
+**SQL Approach:**  
+- Group by shift and date  
+- Use `HAVING COUNT(*) > 1`
+
+```sql
+WITH Overlappingshifts AS (
+  SELECT cs.shift_id, cs.date, s.start_time, s.end_time,
+         STRING_AGG(st.first_name || ' ' || st.last_name, ' | ') AS employees,
+         COUNT(*) AS employees_count
+  FROM coffeeshop cs
+  JOIN shift s ON cs.shift_id = s.shift_id
+  JOIN staff st ON cs.staff_id = st.staff_id
+  GROUP BY cs.shift_id, cs.date, s.start_time, s.end_time
+  HAVING COUNT(*) > 1
+)
+SELECT * FROM Overlappingshifts
+ORDER BY date, shift_id;
+
+```
+
+#### Q5. Identify shifts with insufficient staff  
+**Business Problem:**  
+Identify scheduling conflicts where multiple employees are assigned to the same shift.
+
+**SQL Approach:**  
+- Group employees per shift
+- Filter shifts having one or zero employees
+
+```sql
+SELECT cs.shift_id, cs.date, s.start_time, s.end_time,
+       STRING_AGG(st.first_name || ' ' || st.last_name, ' | ') AS employees,
+       COUNT(*) AS employees_count
+FROM coffeeshop cs
+JOIN shift s ON cs.shift_id = s.shift_id
+JOIN staff st ON cs.staff_id = st.staff_id
+GROUP BY cs.shift_id, cs.date, s.start_time, s.end_time
+HAVING COUNT(*) <= 1;
+
+```
+
+### 🔹 3. Sales & Revenue Analysis  
+
+#### Q7.Busiest Sales Hours 
+**Business Problem:**  
+Understand peak business hours to optimize staffing.
+
+**SQL Approach:**  
+- Extract hour from order timestamps  
+- Aggregate total revenue by hour
+
+```sql
+SELECT cs.shift_id, cs.date, s.start_time, s.end_time,
+       STRING_AGG(st.first_name || ' ' || st.last_name, ' | ') AS employees,
+       COUNT(*) AS employees_count
+FROM coffeeshop cs
+JOIN shift s ON cs.shift_id = s.shift_id
+JOIN staff st ON cs.staff_id = st.staff_id
+GROUP BY cs.shift_id, cs.date, s.start_time, s.end_time
+HAVING COUNT(*) <= 1;
+
+```
 
 
   
