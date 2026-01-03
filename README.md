@@ -63,3 +63,30 @@ JOIN coffeeshop cs ON sf.staff_id = cs.staff_id
 JOIN shift s ON cs.shift_id = s.shift_id
 GROUP BY 1,2,3,4
 ORDER BY sf.staff_id;
+
+```
+
+#### Q1. Identify Overtime Employees  
+**Business Problem:** 
+Detect employees exceeding 25 working hours per week.
+
+**SQL Approach:**  
+- Reuse weekly aggregation  
+- Filter using a subquery and interval comparison
+
+```sql
+SELECT *
+FROM (
+  SELECT sf.staff_id, sf.first_name, sf.last_name,
+         DATE_TRUNC('week', cs.date) AS week_start,
+         SUM(s.end_time - s.start_time) AS total_worked_hours
+  FROM staff sf
+  JOIN coffeeshop cs ON sf.staff_id = cs.staff_id
+  JOIN shift s ON cs.shift_id = s.shift_id
+  GROUP BY 1,2,3,4
+) t
+WHERE total_worked_hours > INTERVAL '25 HOURS';
+```
+  
+
+
