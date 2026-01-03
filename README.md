@@ -66,7 +66,7 @@ ORDER BY sf.staff_id;
 
 ```
 
-#### Q1. Identify Overtime Employees  
+#### Q2. Identify Overtime Employees  
 **Business Problem:** 
 Detect employees exceeding 25 working hours per week.
 
@@ -86,7 +86,65 @@ FROM (
   GROUP BY 1,2,3,4
 ) t
 WHERE total_worked_hours > INTERVAL '25 HOURS';
+
 ```
+
+#### Q3. Rank Employees by Workload 
+**Business Problem:** 
+Identify top-working employees for performance and burnout analysis.
+
+**SQL Approach:**  
+- Use CTE for weekly hours 
+- Apply `DENSE_RANK()` for ranking
+
+```sql
+WITH emp_worked_hours AS (
+  SELECT sf.staff_id, sf.first_name, sf.last_name,
+         DATE_TRUNC('week', cs.date) AS week_start,
+         SUM(s.end_time - s.start_time) AS total_worked_hours
+  FROM staff sf
+  JOIN coffeeshop cs ON sf.staff_id = cs.staff_id
+  JOIN shift s ON cs.shift_id = s.shift_id
+  GROUP BY 1,2,3,4
+)
+SELECT *,
+       DENSE_RANK() OVER (ORDER BY total_worked_hours DESC) AS rank_top_working_employees
+FROM emp_worked_hours;
+
+```
+
+#### Q4. Optimize Shift Allocation 
+**Business Problem:** 
+Suggest reallocation between overworked and underworked staff.
+
+**SQL Approach:**  
+- Calculate total hours per employee 
+- Segment into overworked vs underworked using CTEs
+
+```sql
+WITH EmployeeHours AS (
+  SELECT sf.staff_id, sf.first_name, sf.last_name,
+         SUM(EXTRACT(EPOCH FROM (s.end_time - s.start_time)) / 3600) AS total_worked_hours
+  FROM staff sf
+  JOIN coffeeshop cs ON sf.staff_id = cs.staff_id
+  JOIN shift s ON cs.shift_id = s.shift_id
+  GROUP BY 1,2,3
+),
+OverWorked AS (
+  SELECT * FROM EmployeeHours WHERE total_worked_hours > 25
+),
+UnderWorked AS (
+  SELECT * FROM EmployeeHours WHERE total_worked_hours < 25
+)
+SELECT o.staff_id AS overworked_id, u.staff_id AS underworked_id,
+       'Consider Shift reallocation' AS suggestion
+FROM OverWorked o
+CROSS JOIN UnderWorked u;
+
+```
+
+
+
   
 
 
